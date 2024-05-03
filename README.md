@@ -10,6 +10,8 @@ Usually, people use [Violentmonkey](https://violentmonkey.github.io/) or [Tamper
 
 If you're unsure what a userscript manager is, it's a browser extension that can run custom code on websites. Most people who create scripts for MPP.net use userscripts.
 
+The script can be found at... TODO
+
 ## For developers
 
 This project uses bun to compile the code into a single userscript.
