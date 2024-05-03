@@ -1,0 +1,5 @@
+{
+    "ignore": ["build/*", "scripts/*"],
+    "ext": "js,ts,jsx,tsx,css,html",
+    "exec": "bun scripts/build.ts"
+}

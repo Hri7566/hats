@@ -1,0 +1,12 @@
+{
+  "name": "hats",
+  "module": "src/index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "mpp-client-net": "^1.2.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
