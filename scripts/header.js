@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         MPP Hats
+// @name         mpp-hats
 // @namespace    http://github.com/Hri7566/hats
 // @version      2.0
 // @description  Hats for MPP.net
