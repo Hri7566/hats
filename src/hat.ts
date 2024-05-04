@@ -1,15 +1,5 @@
-export interface IHat {
-    id: string;
-    url: string;
-}
+export const serverAddress = "http://localhost:3000/";
 
-export let currentHat: IHat = {
-    id: "",
-    url: ""
-};
-
-function setCurrentHat() {}
-
-function getCurrentHat() {
-    return currentHat;
+export function getCurrentHat() {
+    return "cat";
 }

@@ -1,6 +1,6 @@
+import { getCurrentHat } from "~/hat";
 import { customReply } from "~/util/custom";
 import { EventEmitter, type IEventDict } from "~/util/EventEmitter";
-import { currentHat } from "../hat";
 
 export interface IHatEventKeys {
     query: string;
@@ -35,6 +35,8 @@ e.on("query", (msg, orig) => {
 
     const p = (orig as any).p;
 
+    console.log(orig);
+
     MPP.client.sendArray([
         {
             m: "custom",
@@ -44,7 +46,7 @@ e.on("query", (msg, orig) => {
             },
             data: {
                 m: "query_reply",
-                hat: currentHat
+                hat: getCurrentHat()
             }
         }
     ]);

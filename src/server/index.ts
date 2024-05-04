@@ -1,9 +1,11 @@
 import { join, resolve } from "path/posix";
-import { exists } from "fs/promises";
+import { exists, readdir } from "fs/promises";
 
-const apiReply = (data: any) => {
-    return new Response(data);
+const jsonReply = (data: any) => {
+    return new Response(JSON.stringify(data));
 };
+
+const assetsFolder = "./assets/";
 
 const getHatImage = async (id: string) => {
     const path =
@@ -17,7 +19,9 @@ const getHatImage = async (id: string) => {
     return data;
 };
 
-const assetsFolder = "./assets/";
+const getHatList = async () => {
+    return await readdir(resolve(assetsFolder));
+};
 
 Bun.serve({
     async fetch(req) {
@@ -33,12 +37,21 @@ Bun.serve({
             return new Response(image);
         }
 
-        return apiReply({
-            uptime: process.uptime()
-        });
+        if (url.pathname == "/list") {
+            const list = await getHatList();
+            return jsonReply(list);
+        }
+
+        if (url.pathname == "/") {
+            return jsonReply({
+                uptime: process.uptime()
+            });
+        }
+
+        throw new Error("404 not found");
     },
 
     async error(err) {
-        return apiReply(err);
+        return new Response(err.toString());
     }
 });
