@@ -6,7 +6,12 @@ const apiReply = (data: any) => {
 };
 
 const getHatImage = async (id: string) => {
-    const path = resolve(assetsFolder, id + ".png");
+    const path =
+        resolve(assetsFolder) +
+        "/" +
+        encodeURIComponent(id).split("%2F").join("/").split(".").join("-") +
+        ".png";
+    console.log(path);
     if (!(await exists(path))) throw new Error("invalid id");
     const data = Bun.file(path);
     return data;
