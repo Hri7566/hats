@@ -31,7 +31,11 @@ Bun.serve({
         const url = new URL(req.url);
 
         const headers = new Headers();
-        headers.set("access-control-allow-origin", "*");
+        headers.set("Access-Control-Allow-Origin", "*");
+        headers.set(
+            "Access-Control-Allow-Methods",
+            "GET, POST, PUT, DELETE, OPTIONS"
+        );
 
         if (url.pathname == "/hat") {
             const params = new URLSearchParams(url.search);
