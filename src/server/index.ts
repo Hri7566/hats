@@ -20,7 +20,9 @@ const getHatImage = async (id: string) => {
 };
 
 const getHatList = async () => {
-    return await readdir(resolve(assetsFolder));
+    return (await readdir(resolve(assetsFolder))).map(filename =>
+        filename.split(".png").join("")
+    );
 };
 
 Bun.serve({

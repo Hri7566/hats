@@ -1,3 +1,5 @@
+import { customReply } from "./util/custom";
+
 export const serverAddress = "https://hats.hri7566.info/api";
 
 let currentHat = "cat";
@@ -7,6 +9,8 @@ let savedHat = localStorage.getItem("hat");
 if (typeof savedHat !== "undefined" && savedHat !== null) {
     currentHat = savedHat;
 }
+
+export const hatCache = new Map<string, string>();
 
 /**
  * Get our current hat
@@ -75,11 +79,15 @@ export async function applyHat(userId: string, hatId: string) {
         left: "4px"
     });
 
-    if (MPP.client.channel.crown.userId == userId) {
-        hat.css({
-            top: "-8px",
-            left: "20px"
-        });
+    if (typeof MPP.client.channel.crown == "object") {
+        if (MPP.client.channel.crown.hasOwnProperty("userId")) {
+            if (MPP.client.channel.crown.userId == userId) {
+                hat.css({
+                    top: "-8px",
+                    left: "20px"
+                });
+            }
+        }
     }
 }
 
@@ -96,6 +104,33 @@ export async function setPartHat(userId: string, hatId: string) {
 
     // Add their new hat
     await applyHat(userId, hatId);
+
+    // Save to cache
+    hatCache.set(userId, hatId);
+}
+
+/**
+ * Get a participant's hat
+ * @param userId MPP user ID
+ * @returns Hat ID
+ */
+export function getPartHat(userId: string) {
+    // Get the part's hat ID and return it
+
+    // If we have it cached, return that
+    const cached = hatCache.get(userId);
+    if (typeof cached !== "undefined") return cached;
+
+    // Otherwise, ask them what hat they have
+    customReply(userId, { m: "hat_query" });
+}
+
+/**
+ * Remove a user's hat from cache
+ * @param userId MPP user ID
+ */
+export async function uncachePartHat(userId: string) {
+    hatCache.delete(userId);
 }
 
 /**

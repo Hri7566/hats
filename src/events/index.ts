@@ -34,19 +34,10 @@ e.on("query", (msg, orig) => {
     console.log("received query");
     const p = (orig as any).p;
 
-    MPP.client.sendArray([
-        {
-            m: "custom",
-            target: {
-                mode: "id",
-                id: p
-            },
-            data: {
-                m: "hat_query_reply",
-                hat: getCurrentHat()
-            }
-        }
-    ]);
+    customReply(p, {
+        m: "hat_query_reply",
+        hat: getCurrentHat()
+    });
 });
 
 e.on("query_reply", async (msg, orig) => {

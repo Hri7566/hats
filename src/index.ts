@@ -1,6 +1,7 @@
 import { e } from "./events";
 import { validateMessage } from "./events/validators";
 import * as hats from "./hat";
+import { customReply } from "./util/custom";
 
 // workaround since we don't have "once"
 function setup() {
@@ -16,11 +17,11 @@ function setup() {
     MPP.client.off("hi", setup);
 }
 
-// if we're loading before we're connected
-MPP.client.on("hi", setup);
-
-// if we're loading after we're connected
-if (MPP.client.isConnected()) {
+if (!MPP.client.isConnected()) {
+    // if we're loading before we're connected
+    MPP.client.on("hi", setup);
+} else {
+    // if we're loading after we're connected
     setup();
 }
 
@@ -38,6 +39,25 @@ MPP.client.on("custom", msg => {
 
     // Emit data
     e.emit(msg.data, msg);
+});
+
+MPP.client.on("participant added", p => {
+    customReply(p._id, { m: "hat_query" });
+});
+
+MPP.client.on("participant removed", p => {
+    hats.uncachePartHat(p._id);
+});
+
+MPP.client.on("participant update", p => {
+    const hatId = hats.getPartHat(p._id);
+    if (!hatId) return;
+    hats.applyHat(p._id, hatId);
+});
+
+MPP.client.on("ch", msg => {
+    // Set hat on "first" join
+    hats.changeHat(hats.getCurrentHat());
 });
 
 // global for baby
