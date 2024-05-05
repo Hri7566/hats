@@ -48,7 +48,10 @@ export function removeHat(userId: string) {
     $(part.nameDiv).children(".mpp-hat").remove();
 
     // Remove cursor hat
-    $(part.cursorDiv).children(".name").children(".cursor-hat").remove();
+    $(part.cursorDiv)
+        .children(".name")
+        .children(".cursor-hat-conatiner")
+        .remove();
 }
 
 /**
@@ -73,11 +76,29 @@ export async function applyHat(userId: string, hatId: string) {
     const cursorText = $(part.cursorDiv).children(".name").text();
     $(part.cursorDiv)
         .children(".name")
-        .html(`<div class="cursor-hat"></div>${cursorText}`);
+        .html(
+            `<span class="nametext">${cursorText}</span><div class="cursor-hat-container"><div class="cursor-hat"></div></div>`
+        );
+
+    // Force newer cursors on older clients
+    $(part.cursorDiv).children(".name").children("span.nametext").css({
+        display: "inline-block",
+        "pointer-events": "none",
+        color: "#fff",
+        "border-radius": "2px",
+        "margin-bottom": "1px",
+        "white-space": "nowrap",
+        "flex-shrink": "0", // some idiot put this in the mppnet client css, there is no flex here
+        "font-size": "10px"
+    });
 
     const hat = $(part.nameDiv).children(".mpp-hat");
+    const cursorHatContainer = $(part.cursorDiv)
+        .children(".name")
+        .children(".cursor-hat-container");
     const cursorHat = $(part.cursorDiv)
         .children(".name")
+        .children(".cursor-hat-container")
         .children(".cursor-hat");
 
     hat.css({
@@ -90,13 +111,17 @@ export async function applyHat(userId: string, hatId: string) {
         left: "4px"
     });
 
+    cursorHatContainer.css({
+        display: "inline-block",
+        position: "relative",
+        top: "-26px",
+        right: "0",
+        height: "0",
+        width: "16px"
+    });
+
     cursorHat.css({
-        background: `url(${serverAddress}/hat?id=${encodeURIComponent(hatId)})`,
-        width: "16px",
-        height: "16px",
-        position: "absolute",
-        top: "-7px",
-        right: "16px"
+        content: `url(${serverAddress}/hat?id=${encodeURIComponent(hatId)})`
     });
 
     if (typeof MPP.client.channel.crown == "object") {
@@ -105,6 +130,12 @@ export async function applyHat(userId: string, hatId: string) {
                 hat.css({
                     top: "-8px",
                     left: "20px"
+                });
+
+                cursorHatContainer.css({
+                    position: "absolute",
+                    top: "-7px",
+                    right: "17px"
                 });
             }
         }
