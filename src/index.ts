@@ -34,7 +34,8 @@ $("body").append(
 $(".mpp-hats-button").css({
     position: "fixed",
     right: "6px",
-    top: "58px"
+    top: "58px",
+    "z-index": "100"
 });
 
 $(".mpp-hats-button").on("click", async () => {
