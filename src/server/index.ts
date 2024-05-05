@@ -2,7 +2,7 @@ import { join, resolve } from "path/posix";
 import { exists, readFile } from "fs/promises";
 import YAML from "yaml";
 
-const jsonReply = (data: any, headers?: any) => {
+const jsonReply = (data: any, headers: any) => {
     return new Response(JSON.stringify(data), headers);
 };
 
@@ -49,9 +49,12 @@ Bun.serve({
         }
 
         if (url.pathname == "/") {
-            return jsonReply({
-                uptime: process.uptime()
-            });
+            return jsonReply(
+                {
+                    uptime: process.uptime()
+                },
+                headers
+            );
         }
 
         throw new Error("404 not found");
