@@ -1,3 +1,5 @@
+![logo](./logo.png)
+
 # MPP Hats
 
 Script for wearing hats on [MPP.net](https://multiplayerpiano.net).
