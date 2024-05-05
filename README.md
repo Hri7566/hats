@@ -24,7 +24,7 @@ First, install dependencies:
 bun install
 ```
 
-Then bundle the script:
+Then build the script bundle:
 
 ```bash
 bun scripts/build.ts
