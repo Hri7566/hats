@@ -2,16 +2,25 @@ export const serverAddress = "https://hats.hri7566.info/api";
 
 let currentHat = "cat";
 
-let savedHat = localStorage.getItem("currentHat");
+let savedHat = localStorage.getItem("hat");
 
 if (typeof savedHat !== "undefined" && savedHat !== null) {
     currentHat = savedHat;
 }
 
+/**
+ * Get our current hat
+ * @returns Hat ID
+ */
 export function getCurrentHat() {
     return currentHat;
 }
 
+/**
+ * Hat ID to image data
+ * @param hatId Hat ID
+ * @returns Image blob
+ */
 export async function getHatImage(hatId: string) {
     // Fetch the image for the new hat
     const url = new URL(serverAddress + `/hat?id=${hatId}`);
@@ -21,6 +30,11 @@ export async function getHatImage(hatId: string) {
     return data.blob();
 }
 
+/**
+ * Remove any given user's hat from DOM
+ * @param userId MPP user ID
+ * @returns undefined
+ */
 export function removeHat(userId: string) {
     // Get participant
     const part = Object.values(MPP.client.ppl).find(p => p._id == userId);
@@ -30,6 +44,12 @@ export function removeHat(userId: string) {
     $(part.nameDiv).children(".mpp-hat").remove();
 }
 
+/**
+ * Add hat to any given user's name in DOM
+ * @param userId MPP user ID
+ * @param hatId Hat ID
+ * @returns undefined
+ */
 export async function applyHat(userId: string, hatId: string) {
     // Add a hat to a participant
     if (typeof MPP.client.channel == "undefined") return;
@@ -63,6 +83,11 @@ export async function applyHat(userId: string, hatId: string) {
     }
 }
 
+/**
+ * Remove given participant's hat and replace with a new one
+ * @param userId MPP user ID
+ * @param hatId Hat ID
+ */
 export async function setPartHat(userId: string, hatId: string) {
     // Set a participant's hat
 
@@ -73,6 +98,11 @@ export async function setPartHat(userId: string, hatId: string) {
     await applyHat(userId, hatId);
 }
 
+/**
+ * Change own current hat
+ * @param id Hat ID
+ * @returns undefined
+ */
 export async function changeHat(id: string) {
     // Set current hat
 
@@ -82,6 +112,7 @@ export async function changeHat(id: string) {
 
     // Set our own hat
     currentHat = id;
+    localStorage.setItem("hat", getCurrentHat());
     setPartHat(MPP.client.getOwnParticipant()._id, id);
 
     // Tell everyone else what our hat is
