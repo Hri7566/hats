@@ -2,8 +2,8 @@ import { join, resolve } from "path/posix";
 import { exists, readFile } from "fs/promises";
 import YAML from "yaml";
 
-const jsonReply = (data: any) => {
-    return new Response(JSON.stringify(data));
+const jsonReply = (data: any, headers?: any) => {
+    return new Response(JSON.stringify(data), headers);
 };
 
 const assetsFolder = "./assets/";
@@ -30,13 +30,13 @@ Bun.serve({
     async fetch(req) {
         const url = new URL(req.url);
 
+        const headers = new Headers();
+        headers.set("access-control-allow-origin", "*");
+
         if (url.pathname == "/hat") {
             const params = new URLSearchParams(url.search);
             if (!params.has("id")) return new Response("no id provided");
             const id = params.get("id");
-
-            const headers = new Headers();
-            headers.set("access-control-allow-origin", "*");
 
             const image = await getHatImage(id as string);
             if (!image) return new Response("invalid id");
@@ -45,7 +45,7 @@ Bun.serve({
 
         if (url.pathname == "/list") {
             const list = await getHatList();
-            return jsonReply(list);
+            return jsonReply(list, headers);
         }
 
         if (url.pathname == "/") {
