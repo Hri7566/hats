@@ -1,5 +1,6 @@
 import { join, resolve } from "path/posix";
-import { exists, readdir } from "fs/promises";
+import { exists, readFile } from "fs/promises";
+import YAML from "yaml";
 
 const jsonReply = (data: any) => {
     return new Response(JSON.stringify(data));
@@ -20,9 +21,9 @@ const getHatImage = async (id: string) => {
 };
 
 const getHatList = async () => {
-    return (await readdir(resolve(assetsFolder))).map(filename =>
-        filename.split(".png").join("")
-    );
+    const data = (await readFile("./hats.yml")).toString();
+    const y = YAML.parse(data);
+    return y;
 };
 
 Bun.serve({
