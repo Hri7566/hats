@@ -2,8 +2,16 @@ import { join, resolve } from "path/posix";
 import { exists, readFile } from "fs/promises";
 import YAML from "yaml";
 
-const jsonReply = (data: any, headers: any) => {
-    return new Response(JSON.stringify(data), headers);
+const jsonReply = (data: any) => {
+    const res = new Response(JSON.stringify(data));
+
+    res.headers.set("Access-Control-Allow-Origin", "*");
+    res.headers.set(
+        "Access-Control-Allow-Methods",
+        "GET, POST, PUT, DELETE, OPTIONS"
+    );
+
+    return res;
 };
 
 const assetsFolder = "./assets/";
@@ -32,6 +40,7 @@ Bun.serve({
 
         const headers = new Headers();
         headers.set("Access-Control-Allow-Origin", "*");
+        headers.set("Age", "1");
         headers.set(
             "Access-Control-Allow-Methods",
             "GET, POST, PUT, DELETE, OPTIONS"
@@ -44,21 +53,24 @@ Bun.serve({
 
             const image = await getHatImage(id as string);
             if (!image) return new Response("invalid id");
-            return new Response(image, { headers });
+            const res = new Response(image);
+            res.headers.set("Access-Control-Allow-Origin", "*");
+            res.headers.set(
+                "Access-Control-Allow-Methods",
+                "GET, POST, PUT, DELETE, OPTIONS"
+            );
+            return res;
         }
 
         if (url.pathname == "/list") {
             const list = await getHatList();
-            return jsonReply(list, headers);
+            return jsonReply(list);
         }
 
         if (url.pathname == "/") {
-            return jsonReply(
-                {
-                    uptime: process.uptime()
-                },
-                headers
-            );
+            return jsonReply({
+                uptime: process.uptime()
+            });
         }
 
         throw new Error("404 not found");
