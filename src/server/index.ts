@@ -13,7 +13,7 @@ const getHatImage = async (id: string) => {
         "/" +
         encodeURIComponent(id).split("%2F").join("/").split(".").join("-") +
         ".png";
-    console.log(path);
+    // console.log(path);
     if (!(await exists(path))) throw new Error("invalid id");
     const data = Bun.file(path);
     return data;

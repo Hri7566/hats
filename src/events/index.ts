@@ -1,4 +1,4 @@
-import { getCurrentHat } from "~/hat";
+import { getCurrentHat, setPartHat } from "~/hat";
 import { customReply } from "~/util/custom";
 import { EventEmitter, type IEventDict } from "~/util/EventEmitter";
 
@@ -32,10 +32,7 @@ export const e = new EventEmitter<IHatEvents>();
 
 e.on("query", (msg, orig) => {
     console.log("received query");
-
     const p = (orig as any).p;
-
-    console.log(orig);
 
     MPP.client.sendArray([
         {
@@ -45,17 +42,19 @@ e.on("query", (msg, orig) => {
                 id: p
             },
             data: {
-                m: "query_reply",
+                m: "hat_query_reply",
                 hat: getCurrentHat()
             }
         }
     ]);
 });
 
-e.on("query_reply", msg => {
+e.on("query_reply", async (msg, orig) => {
     console.log("received query_reply");
+    await setPartHat((orig as any).p as string, msg.hat);
 });
 
-e.on("change", msg => {
+e.on("change", async (msg, orig) => {
     console.log("received change");
+    await setPartHat((orig as any).p as string, msg.hat);
 });

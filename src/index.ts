@@ -1,5 +1,6 @@
 import { e } from "./events";
 import { validateMessage } from "./events/validators";
+import * as hats from "./hat";
 
 // workaround since we don't have "once"
 function setup() {
@@ -28,14 +29,6 @@ const customMessagePrefix = "hat_";
 MPP.client.on("custom", msg => {
     if (typeof msg.data.m == "undefined") return;
 
-    // these are from people who can't follow standards
-    if (typeof msg.data.sc !== "undefined") return;
-    if (typeof msg.data.assistant_users !== "undefined") return;
-
-    // these are from people who can follow standards
-    if (msg.data.m == "draw") return;
-    if (msg.data.m == "mppct") return;
-
     // Remove prefix and store in the correct property for the emitter to work
     msg.data.evtn = msg.data.m.substring(customMessagePrefix.length).trim();
     delete msg.data.m;
@@ -46,3 +39,6 @@ MPP.client.on("custom", msg => {
     // Emit data
     e.emit(msg.data, msg);
 });
+
+// global for baby
+(MPP as any).hats = hats;
