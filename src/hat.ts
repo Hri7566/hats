@@ -46,6 +46,9 @@ export function removeHat(userId: string) {
 
     // Remove the user's hat
     $(part.nameDiv).children(".mpp-hat").remove();
+
+    // Remove cursor hat
+    $(part.cursorDiv).children(".name").children(".cursor-hat").remove();
 }
 
 /**
@@ -62,12 +65,20 @@ export async function applyHat(userId: string, hatId: string) {
     const part = Object.values(MPP.client.ppl).find(p => p._id == userId);
     if (!part) return;
 
-    // Create hat element
+    // Create hat elements
     $(part.nameDiv).prepend(
         `<div class="mpp-hat" data-hat-id="${hatId}"></div>`
     );
 
+    const cursorText = $(part.cursorDiv).children(".name").text();
+    $(part.cursorDiv)
+        .children(".name")
+        .html(`<div class="cursor-hat"></div>${cursorText}`);
+
     const hat = $(part.nameDiv).children(".mpp-hat");
+    const cursorHat = $(part.cursorDiv)
+        .children(".name")
+        .children(".cursor-hat");
 
     hat.css({
         // background: `url(crown.png)`,
@@ -77,6 +88,15 @@ export async function applyHat(userId: string, hatId: string) {
         position: "absolute",
         top: "-8px",
         left: "4px"
+    });
+
+    cursorHat.css({
+        background: `url(${serverAddress}/hat?id=${encodeURIComponent(hatId)})`,
+        width: "16px",
+        height: "16px",
+        position: "absolute",
+        top: "-7px",
+        right: "16px"
     });
 
     if (typeof MPP.client.channel.crown == "object") {
