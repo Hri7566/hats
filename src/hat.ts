@@ -81,6 +81,24 @@ export async function applyHat(userId: string, hatId: string) {
         );
 
     // Force newer cursors on older clients
+    $(part.cursorDiv).children(".name").css({
+        display: "block",
+        "align-items": "center",
+        position: "relative",
+        "white-space": "nowrap",
+        height: "fit-content",
+        width: "fit-content",
+        "line-height": "15px",
+        "text-align": "center",
+        "border-radius": "3px",
+        left: "18px",
+        top: "12px",
+        "pointer-events": "none",
+        color: "#fff",
+        padding: "unset",
+        "font-size": "unset"
+    });
+
     $(part.cursorDiv).children(".name").children("span.nametext").css({
         display: "inline-block",
         "pointer-events": "none",
@@ -114,7 +132,7 @@ export async function applyHat(userId: string, hatId: string) {
     cursorHatContainer.css({
         display: "inline-block",
         position: "relative",
-        top: "-26px",
+        top: "-24px",
         right: "0",
         height: "0",
         width: "16px"
@@ -134,7 +152,7 @@ export async function applyHat(userId: string, hatId: string) {
 
                 cursorHatContainer.css({
                     position: "absolute",
-                    top: "-7px",
+                    top: "-6px",
                     right: "17px"
                 });
             }
