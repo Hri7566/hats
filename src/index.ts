@@ -113,5 +113,65 @@ MPP.client.on("ch", msg => {
     hats.changeHat(hats.getCurrentHat());
 });
 
+MPP.client.on("c", async msg => {
+    // Append hats to chat history
+    if (typeof msg.c !== "object") return;
+    if (!Array.isArray) return;
+
+    console.log(msg);
+
+    for (let i = 0; i < msg.c.length; i++) {
+        try {
+            const a = msg.c[i];
+            if (a.m == "dm") continue;
+
+            const p = MPP.client.findParticipantById(a.p.id);
+            console.log(p);
+            if (!p) continue;
+
+            const hatId = hats.getPartHat(p._id);
+            console.log(hatId);
+            if (!hatId) continue;
+
+            const span = `<span class="chat-hat" style="content: url(${hats.getHatBaseURL(
+                hatId
+            )});"></span>`;
+            const chatMessage = $(`#chat ul li#msg-${a.id}`);
+
+            console.log(span);
+            console.log(chatMessage);
+
+            $(chatMessage).children(".name").before(span);
+        } catch (err) {
+            console.error(err);
+            continue;
+        }
+    }
+});
+
+MPP.client.on("a", msg => {
+    // Append hat to chat message
+    try {
+        const p = MPP.client.findParticipantById(msg.p.id);
+        if (!p) return;
+
+        const hatId = hats.getPartHat(p._id);
+        console.log(hatId);
+        if (!hatId) return;
+
+        const span = `<span class="chat-hat" style="content: url(${hats.getHatBaseURL(
+            hatId
+        )});"></span>`;
+        const chatMessage = $(`#chat ul li#msg-${msg.id}`);
+
+        console.log(span);
+        console.log(chatMessage);
+
+        $(chatMessage).children(".name").before(span);
+    } catch (err) {
+        console.error(err);
+    }
+});
+
 // global for baby
 (MPP as any).hats = hats;

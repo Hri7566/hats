@@ -3,14 +3,22 @@ import { customReply } from "./util/custom";
 export const serverAddress = "https://hats.hri7566.info/api";
 
 let currentHat = "cat";
-
 let savedHat = localStorage.getItem("hat");
+let savedCache = localStorage.getItem("hatCache");
 
 if (typeof savedHat !== "undefined" && savedHat !== null) {
     currentHat = savedHat;
 }
 
 export const hatCache = new Map<string, string>();
+
+if (typeof savedCache !== "undefined" && savedCache !== null) {
+    const obj = JSON.parse(savedCache);
+
+    for (const key of Object.keys(obj)) {
+        hatCache.set(key, obj[key]);
+    }
+}
 
 /**
  * Get our current hat
@@ -20,6 +28,10 @@ export function getCurrentHat() {
     return currentHat;
 }
 
+export function getHatBaseURL(hatId: string) {
+    return new URL(serverAddress + `/hat?id=${hatId}`);
+}
+
 /**
  * Hat ID to image data
  * @param hatId Hat ID
@@ -27,11 +39,13 @@ export function getCurrentHat() {
  */
 export async function getHatImage(hatId: string) {
     // Fetch the image for the new hat
+    // blob stuff didn't work out
     const url = new URL(serverAddress + `/hat?id=${hatId}`);
-    const data = await fetch(url);
+    return url;
+    // const data = await fetch(url);
 
     // Turn it into readable data
-    return data.blob();
+    // return data.blob();
 }
 
 /**
@@ -176,6 +190,13 @@ export async function setPartHat(userId: string, hatId: string) {
 
     // Save to cache
     hatCache.set(userId, hatId);
+
+    let table: Record<string, string> = {};
+    for (const [pid, hid] of hatCache.entries()) {
+        table[pid] = hid;
+    }
+
+    localStorage.setItem("hatCache", JSON.stringify(table));
 }
 
 /**
