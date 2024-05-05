@@ -32,9 +32,12 @@ Bun.serve({
             if (!params.has("id")) return new Response("no id provided");
             const id = params.get("id");
 
+            const headers = new Headers();
+            headers.set("access-control-allow-origin", "*");
+
             const image = await getHatImage(id as string);
             if (!image) return new Response("invalid id");
-            return new Response(image);
+            return new Response(image, { headers });
         }
 
         if (url.pathname == "/list") {
