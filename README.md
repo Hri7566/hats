@@ -10,7 +10,7 @@ Usually, people use [Violentmonkey](https://violentmonkey.github.io/) or [Tamper
 
 If you're unsure what a userscript manager is, it's a browser extension that can run custom code on websites. Most people who create scripts for MPP.net use userscripts.
 
-Then, to get the script, it can be found [here](./releases/latest/download/mpp-hats.user.js).
+Then, to get the script, it can be found [here](https://github.com/Hri7566/hats/releases/latest/download/mpp-hats.user.js).
 
 ## For developers
 
