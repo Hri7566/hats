@@ -31,7 +31,6 @@ export const e = new EventEmitter<IHatEvents>();
 // Main hat events
 
 e.on("query", (msg, orig) => {
-    console.log("received query");
     const p = (orig as any).p;
 
     customReply(p, {
@@ -41,11 +40,9 @@ e.on("query", (msg, orig) => {
 });
 
 e.on("query_reply", async (msg, orig) => {
-    console.log("received query_reply");
     await setPartHat((orig as any).p as string, msg.hat);
 });
 
 e.on("change", async (msg, orig) => {
-    console.log("received change");
     await setPartHat((orig as any).p as string, msg.hat);
 });

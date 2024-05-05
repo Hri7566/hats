@@ -6,16 +6,17 @@ declare interface IMPP {
     piano: {
         play(): void;
         stop(): void;
-    }
+    };
 
     soundSelector: {
         addPack(): void;
-    }
+    };
 
     chat: {
         receive(msg: unknown): void;
         send(str: string): void;
-    }
+        blur(): void;
+    };
 }
 
 declare global {

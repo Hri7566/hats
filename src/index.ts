@@ -1,9 +1,10 @@
 import { e } from "./events";
 import { validateMessage } from "./events/validators";
 import * as hats from "./hat";
+import { closeModal, openModal } from "./modal";
 import { customReply } from "./util/custom";
 
-// workaround since we don't have "once"
+// Weird workaround since the client's EventEmitter class doesn't have "once"
 function setup() {
     // Subscribe to custom stuff
     MPP.client.sendArray([
@@ -24,6 +25,58 @@ if (!MPP.client.isConnected()) {
     // if we're loading after we're connected
     setup();
 }
+
+// Add hat selector button
+$("body").append(
+    `<button class="mpp-hats-button top-button" aria-hidden="true"><img src="https://hats.hri7566.info/api/hat?id=tophat" style="vertical-align: middle;">Hats</button>`
+);
+
+$(".mpp-hats-button").css({
+    position: "fixed",
+    right: "6px",
+    top: "58px"
+});
+
+$(".mpp-hats-button").on("click", async () => {
+    openModal("#modal #modals #hats");
+
+    $(
+        `#modal #modals #hats #hat-selector option[value=${hats.getCurrentHat()}]`
+    ).attr("selected", "true");
+
+    const list = await hats.getHatList();
+
+    for (const hatId of Object.keys(list)) {
+        const hatName = list[hatId];
+        $(`#modal #modals #hats #hat-selector`).append(
+            `<option value="${hatId}">${hatName}</option>`
+        );
+    }
+});
+
+// Add hat selector menu
+
+$("#modals").append(`
+<div id="hats" class="dialog" style="height: 115px; margin-top: -90px; display: none;">
+    <h4>Hats</h4>
+    <hr />
+    <p>
+        <label>Select hat: &nbsp;
+            <select id="hat-selector">
+                <option value="">None</option>
+            </select>
+        </label>
+    </p>
+    <button class="submit">SUBMIT</button>
+</div>`);
+
+$("#modal #modals #hats button.submit").on("click", () => {
+    let selectedHat = $("#modal #modals #hats #hat-selector").val() as string;
+    hats.changeHat(selectedHat);
+    closeModal();
+});
+
+// MPP events
 
 const customMessagePrefix = "hat_";
 

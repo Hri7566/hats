@@ -73,24 +73,18 @@ export class EventEmitter<EventUnion extends IEventDict<string>> {
         evtd: EventUnion[EventName],
         orig?: unknown
     ) {
-        console.log("emit debug start");
         const eventName = evtd.evtn;
         if (!eventName) return;
         if (typeof this._events[eventName] == "undefined") {
-            console.log("no events registered for " + evtd.evtn);
             return;
         }
 
         for (let i in this._events[evtd.evtn]) {
-            console.log(i);
-
             if (isNaN(parseInt(i))) {
-                console.log("i is not number, instead: " + typeof i);
                 continue;
             }
 
             if (typeof this._events[eventName][i] == "undefined") {
-                console.log("property is undefined");
                 continue;
             }
 

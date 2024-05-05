@@ -233,3 +233,13 @@ export async function changeHat(id: string) {
         }
     ]);
 }
+
+/**
+ * Get list of available hats
+ * @returns JSON array
+ */
+export async function getHatList() {
+    // Get list of hats
+    const data = await fetch(serverAddress + "/list");
+    return (await data.json()) as any as Record<string, string>;
+}
