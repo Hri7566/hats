@@ -119,28 +119,21 @@ MPP.client.on("c", async msg => {
     if (typeof msg.c !== "object") return;
     if (!Array.isArray) return;
 
-    console.log(msg);
-
     for (let i = 0; i < msg.c.length; i++) {
         try {
             const a = msg.c[i];
             if (a.m == "dm") continue;
 
             const p = MPP.client.findParticipantById(a.p.id);
-            console.log(p);
             if (!p) continue;
 
             const hatId = hats.getPartHat(p._id);
-            console.log(hatId);
             if (!hatId) continue;
 
             const span = `<span class="chat-hat" style="content: url(${hats.getHatBaseURL(
                 hatId
             )});"></span>`;
             const chatMessage = $(`#chat ul li#msg-${a.id}`);
-
-            console.log(span);
-            console.log(chatMessage);
 
             $(chatMessage).children(".name").before(span);
         } catch (err) {
