@@ -39,6 +39,7 @@ $(".mpp-hats-button").css({
 });
 
 $(".mpp-hats-button").on("click", async () => {
+    $("#modal #modals #hats #hat-selector").empty();
     openModal("#modal #modals #hats");
 
     $(
