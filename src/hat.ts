@@ -87,12 +87,33 @@ export async function applyHat(userId: string, hatId: string) {
         `<div class="mpp-hat" data-hat-id="${hatId}"></div>`
     );
 
-    const cursorText = $(part.cursorDiv).children(".name").text();
+    const cursorNameDiv = $(part.cursorDiv).children(".name");
+
+    let cursorTagText = "";
+    let cursorTagColor = "";
+    let cursorNameText = $(part.cursorDiv).children(".name").text();
+
+    if (typeof $(cursorNameDiv).children(".nametext") !== "undefined") {
+        cursorTagText = $(cursorNameDiv).children(".curtag").text();
+        cursorTagColor = $(cursorNameDiv)
+            .children(".curtag")
+            .css("background-color");
+        cursorNameText = $(cursorNameDiv).children(".nametext").text();
+    }
+
     $(part.cursorDiv)
         .children(".name")
         .html(
-            `<span class="nametext">${cursorText}</span><div class="cursor-hat-container"><div class="cursor-hat"></div></div>`
+            `<span class="nametext">${cursorNameText}</span><div class="cursor-hat-container"><div class="cursor-hat"></div></div>`
         );
+
+    if (cursorTagText.length !== 0) {
+        $(part.cursorDiv)
+            .children(".name")
+            .prepend(
+                `<span class="curtag" id="nametag-${part._id}" style="background-color: ${cursorTagColor};">${cursorTagText}</span>`
+            );
+    }
 
     // Force newer cursors on older clients
     $(part.cursorDiv).children(".name").css({
