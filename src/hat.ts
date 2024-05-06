@@ -91,9 +91,9 @@ export async function applyHat(userId: string, hatId: string) {
 
     let cursorTagText = "";
     let cursorTagColor = "";
-    let cursorNameText = $(part.cursorDiv).children(".name").text();
+    let cursorNameText = $(part.cursorDiv).text();
 
-    if (typeof $(cursorNameDiv).children(".nametext") !== "undefined") {
+    if ($(cursorNameDiv).children(".nametext").text().length !== 0) {
         cursorTagText = $(cursorNameDiv).children(".curtag").text();
         cursorTagColor = $(cursorNameDiv)
             .children(".curtag")
