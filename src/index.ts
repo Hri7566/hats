@@ -150,16 +150,12 @@ MPP.client.on("a", msg => {
         if (!p) return;
 
         const hatId = hats.getPartHat(p._id);
-        console.log(hatId);
         if (!hatId) return;
 
         const span = `<span class="chat-hat" style="content: url(${hats.getHatBaseURL(
             hatId
         )});"></span>`;
         const chatMessage = $(`#chat ul li#msg-${msg.id}`);
-
-        console.log(span);
-        console.log(chatMessage);
 
         $(chatMessage).children(".name").before(span);
     } catch (err) {
