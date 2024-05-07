@@ -28,7 +28,10 @@ if (!MPP.client.isConnected()) {
 
 // Add hat selector button
 $("body").append(
-    `<button class="mpp-hats-button top-button" aria-hidden="true"><img src="https://hats.hri7566.info/api/hat?id=tophat" style="vertical-align: middle;">Hats</button>`
+    `<button class="mpp-hats-button top-button" aria-hidden="true">
+        <img src="https://hats.hri7566.info/api/hat?id=tophat" style="vertical-align: middle;">
+        Hats
+    </button>`
 );
 
 $(".mpp-hats-button").css({
@@ -42,10 +45,6 @@ $(".mpp-hats-button").on("click", async () => {
     $("#modal #modals #hats #hat-selector").empty();
     openModal("#modal #modals #hats");
 
-    $(
-        `#modal #modals #hats #hat-selector option[value=${hats.getCurrentHat()}]`
-    ).attr("selected", "true");
-
     const list = await hats.getHatList();
 
     for (const hatId of Object.keys(list)) {
@@ -54,19 +53,29 @@ $(".mpp-hats-button").on("click", async () => {
             `<option value="${hatId}">${hatName}</option>`
         );
     }
+
+    $(
+        `#modal #modals #hats #hat-selector option[value=${hats.getCurrentHat()}]`
+    ).attr("selected", "true");
+
+    updatePreview(hats.getCurrentHat());
 });
 
 // Add hat selector menu
 
 $("#modals").append(`
-<div id="hats" class="dialog" style="height: 115px; margin-top: -90px; display: none;">
-    <h4>Hats</h4>
+<div id="hats" class="dialog" style="height: 130px; margin-top: -90px; display: none;">
+    <h1>MPP Hats</h1>
     <hr />
     <p>
         <label>Select hat: &nbsp;
             <select id="hat-selector">
                 <option value="">None</option>
             </select>
+        </label>
+        <label>
+            <p>Preview: &nbsp;</p>
+            <img style="padding-left: 32px;" id="hat-selector-preview" src="" width=32>
         </label>
     </p>
     <button class="submit">SUBMIT</button>
@@ -77,6 +86,18 @@ $("#modal #modals #hats button.submit").on("click", () => {
     hats.changeHat(selectedHat);
     closeModal();
 });
+
+$("#modal #modals #hats select#hat-selector").on("change", function (e) {
+    const option = $("option:selected", this);
+    const value = (this as HTMLSelectElement).value;
+
+    updatePreview(value);
+});
+
+function updatePreview(hatId: string) {
+    const imageURL = hats.getHatBaseURL(hatId);
+    $("#hat-selector-preview").attr("src", imageURL.toString());
+}
 
 // MPP events
 
