@@ -4,13 +4,7 @@ import YAML from "yaml";
 
 const jsonReply = (data: any) => {
     const res = new Response(JSON.stringify(data));
-
     res.headers.set("Access-Control-Allow-Origin", "*");
-    res.headers.set(
-        "Access-Control-Allow-Methods",
-        "GET, POST, PUT, DELETE, OPTIONS"
-    );
-
     return res;
 };
 
