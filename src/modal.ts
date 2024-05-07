@@ -3,6 +3,8 @@ let gModal: any;
 export function modalHandleEsc(evt: any) {
     if (evt.key == "Escape") {
         closeModal();
+        // Stop chat from opening, since we're not part of script.js
+        if (MPP.chat) MPP.chat.blur();
     }
 }
 
