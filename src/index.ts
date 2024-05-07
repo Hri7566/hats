@@ -29,7 +29,7 @@ if (!MPP.client.isConnected()) {
 // Add hat selector button
 $("body").append(
     `<button class="mpp-hats-button top-button" aria-hidden="true">
-        <img src="https://hats.hri7566.info/api/hat?id=tophat" style="vertical-align: middle;">
+        <img id="mpp-hats-button-icon" src="https://hats.hri7566.info/api/hat?id=tophat" style="vertical-align: middle;">
         Hats
     </button>`
 );

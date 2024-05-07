@@ -253,8 +253,8 @@ export async function changeHat(id: string) {
     // Set current hat
 
     // Get hat image
-    const image = getHatImage(id);
-    if (!image) return;
+    // const image = getHatImage(id);
+    // if (!image) return;
 
     // Set our own hat
     currentHat = id;
@@ -274,6 +274,14 @@ export async function changeHat(id: string) {
             }
         }
     ]);
+
+    // Change button icon
+    try {
+        $("#mpp-hats-button-icon").attr(
+            "src",
+            getHatBaseURL(getCurrentHat()).toString()
+        );
+    } catch (err) {}
 }
 
 /**
