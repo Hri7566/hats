@@ -1,5 +1,5 @@
 import { join, resolve } from "path/posix";
-import { exists, readFile } from "fs/promises";
+import { exists, readFile, readdir } from "fs/promises";
 import YAML from "yaml";
 
 const jsonReply = (data: any) => {
@@ -17,12 +17,31 @@ const jsonReply = (data: any) => {
 const assetsFolder = "./assets/";
 
 const getHatImage = async (id: string) => {
-    const path =
-        resolve(assetsFolder) +
-        "/" +
-        encodeURIComponent(id).split("%2F").join("/").split(".").join("-") +
-        ".png";
-    // console.log(path);
+    const fileList = await readdir(resolve(assetsFolder));
+    const defangedId = encodeURIComponent(id)
+        .split("%2F")
+        .join("/")
+        .split(".")
+        .join("-");
+
+    let foundFile;
+    let foundFileExt;
+
+    for (const file of fileList) {
+        const parsed = file.split(".");
+        let filename = parsed[0];
+        if (!filename) continue;
+        if (filename.startsWith(defangedId)) {
+            foundFile = filename;
+            foundFileExt = parsed[1];
+        }
+    }
+
+    if (!foundFile) throw new Error("invalid id");
+    if (!foundFileExt) throw new Error("invalid server file");
+
+    const path = resolve(assetsFolder) + "/" + foundFile + "." + foundFileExt;
+    console.log(path);
     if (!(await exists(path))) throw new Error("invalid id");
     const data = Bun.file(path);
     return data;
