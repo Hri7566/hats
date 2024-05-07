@@ -1,7 +1,8 @@
 tophat: Top Hat
 hardhat: Hard Hat
 propeller: Propeller Hat
-party: Party Hat
+party_hat: Party Hat
+party: Party Hat (Old)
 redfedora: Red Fedora
 asian: Asian Straw Hat
 straw: Barber Shop Straw Hat
@@ -17,14 +18,12 @@ no-chat: MPP no-chat.png
 crownsolo: MPP crownsolo.png
 envelope: MPP envelope.png
 pumpkin: Pumpkin
-mc_skull_texture: Minecraft Skeleton
 cowboy: Cowboy
+indiana_jones: Indiana Jones' Hat
 vlc: VLC Media Player
 santa: Santa
 chef: Chef
 pokeball: Pokeball
-cat: Cat
-mc_skull_painting: Minecraft skull painting
 reindeer: Reindeer
 bat: Bat
 piano: Piano
@@ -55,6 +54,10 @@ sdv_chicken: Stardew Valley Chicken
 sdv_chicken_blue: Blue Chicken
 heart: Undertale Heart
 tf2: Team Fortress 2
+iron_helmet: Iron Helmet
+mc_skull_texture: Minecraft Skeleton
+mc_skull_painting: Minecraft skull painting
+cat: Hri7566
 nitsua: Nitsua
 khorne: Khorne
 foonix: Foonix
