@@ -2,7 +2,7 @@ import { customReply } from "./util/custom";
 
 export const serverAddress = "https://hats.hri7566.info/api";
 
-let currentHat = "cat";
+let currentHat = "tophat";
 let savedHat = localStorage.getItem("hat");
 let savedCache = localStorage.getItem("hatCache");
 
