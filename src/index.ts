@@ -64,8 +64,8 @@ $(".mpp-hats-button").on("click", async () => {
 // Add hat selector menu
 
 $("#modals").append(`
-<div id="hats" class="dialog" style="height: 130px; margin-top: -90px; display: none;">
-    <h1>MPP Hats</h1>
+<div id="hats" class="dialog" style="height: 175px; margin-top: -90px; display: none;">
+    <h3>MPP Hats</h3>
     <hr />
     <p>
         <label>Select hat: &nbsp;
