@@ -3,7 +3,6 @@ hardhat: Hard Hat
 propeller: Propeller Hat
 party_hat: Party Hat
 party: Party Hat (Old)
-redfedora: Red Fedora
 asian: Asian Straw Hat
 straw: Barber Shop Straw Hat
 wizard: Wizard's Cap
@@ -11,22 +10,23 @@ witch: Witch Hat
 captain: Pirate Captain's Hat
 pirate: Pirate Hat
 viking: Viking Helmet
+indiana_jones: Indiana Jones' Hat
+cowboy: Cowboy Hat
 crown: MPP Crown
 silvercrown: Silver Crown
 tiny: Tiny Crown
 no-chat: MPP no-chat.png
 crownsolo: MPP crownsolo.png
 envelope: MPP envelope.png
-pumpkin: Pumpkin
-cowboy: Cowboy
-indiana_jones: Indiana Jones' Hat
+piano: Piano
 vlc: VLC Media Player
 santa: Santa
 chef: Chef
 pokeball: Pokeball
 reindeer: Reindeer
 bat: Bat
-piano: Piano
+pumpkin: Pumpkin
+clown_emoji: Clown Emoji
 potato: Potato
 ohio: State of Ohio
 folder: Windows Folder Icon
@@ -59,7 +59,17 @@ mc_skull_texture: Minecraft Skeleton
 mc_skull_painting: Minecraft skull painting
 cat: Hri7566
 nitsua: Nitsua
+lapis: Lapis
+seq: James
+oorah: OORAH
 khorne: Khorne
 foonix: Foonix
 pax: Pax
 badapple: Bad apple
+redfedora: RHEL logo
+arch_linux: i use arch btw
+ubuntu: Ubuntu
+vscode: Visual Studio Code
+neovim: Neovim
+cloudflare: Cloudflare
+mcdonalds: McDonald's
