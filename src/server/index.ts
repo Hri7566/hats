@@ -26,10 +26,8 @@ const getHatImage = async (id: string) => {
         let filename = parsed[0];
         if (!filename) continue;
         if (defangedId == "crown") {
-            if (filename.startsWith("crown.png")) {
-                foundFile = filename;
-                foundFileExt = parsed[1];
-            }
+            foundFile = "crown";
+            foundFileExt = "png";
         } else {
             if (filename.startsWith(defangedId)) {
                 foundFile = filename;
