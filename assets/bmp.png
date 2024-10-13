@@ -1,0 +1,7 @@
+--2024-10-12 20:47:03--  https://i.imgur.com/S0FIOz0.png
+Loaded CA certificate '/etc/ssl/certs/ca-certificates.crt'
+Resolving i.imgur.com (i.imgur.com)... 151.101.44.193
+Connecting to i.imgur.com (i.imgur.com)|151.101.44.193|:443... connected.
+HTTP request sent, awaiting response... 429 Unknown Error
+2024-10-12 20:47:04 ERROR 429: Unknown Error.
+
