@@ -105,7 +105,7 @@ export async function applyHat(userId: string, hatId: string) {
         .children(".name")
         .html(
             `<span class="nametext"></span><div class="cursor-hat-container"><div class="cursor-hat"></div></div>`
-        ).find("nametext").text(cursorNameText);
+        ).find(".nametext").text(cursorNameText);
 
     if (cursorTagText.length !== 0) {
         $(part.cursorDiv)
