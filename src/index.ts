@@ -103,7 +103,7 @@ function updatePreview(hatId: string) {
 // MPP events
 
 const customMessagePrefix = "hat_";
-const queryLimit = new RateLimit(10, 1000);
+const queryLimit = new RateLimit(100, 1000);
 
 MPP.client.on("custom", msg => {
     if (typeof msg.data.m == "undefined") return;
