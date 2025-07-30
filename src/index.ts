@@ -2,6 +2,7 @@ import { e } from "./events";
 import { validateMessage } from "./events/validators";
 import * as hats from "./hat";
 import { closeModal, openModal } from "./modal";
+import { RateLimit } from "./util/RateLimit";
 import { customReply } from "./util/custom";
 
 // Weird workaround since the client's EventEmitter class doesn't have "once"
@@ -87,7 +88,7 @@ $("#modal #modals #hats button.submit").on("click", () => {
     closeModal();
 });
 
-$("#modal #modals #hats select#hat-selector").on("change", function (e) {
+$("#modal #modals #hats select#hat-selector").on("change", function(e) {
     const option = $("option:selected", this);
     const value = (this as HTMLSelectElement).value;
 
@@ -102,6 +103,7 @@ function updatePreview(hatId: string) {
 // MPP events
 
 const customMessagePrefix = "hat_";
+const queryLimit = new RateLimit(10, 1000);
 
 MPP.client.on("custom", msg => {
     if (typeof msg.data.m == "undefined") return;
@@ -118,7 +120,7 @@ MPP.client.on("custom", msg => {
 });
 
 MPP.client.on("participant added", p => {
-    customReply(p._id, { m: "hat_query" });
+    if (queryLimit.spend()) customReply(p._id, { m: "hat_query" });
 });
 
 MPP.client.on("participant removed", p => {
