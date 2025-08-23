@@ -105,8 +105,11 @@ function updatePreview(hatId: string) {
 const customMessagePrefix = "hat_";
 const queryLimit = new RateLimit(100, 1000);
 
-MPP.client.on("custom", msg => {
-    if (typeof msg.data.m == "undefined") return;
+MPP.client.on("custom", m => {
+    if (typeof m.data.m == "undefined") return;
+
+    // Clone message for compatibility
+    let msg = structuredClone(m);
 
     // Remove prefix and store in the correct property for the emitter to work
     msg.data.evtn = msg.data.m.substring(customMessagePrefix.length).trim();
@@ -128,6 +131,7 @@ MPP.client.on("participant removed", p => {
 });
 
 MPP.client.on("participant update", p => {
+    if (!queryLimit.spend()) return;
     const hatId = hats.getPartHat(p._id);
     if (!hatId) return;
     hats.applyHat(p._id, hatId);
