@@ -2,8 +2,6 @@ import { e } from "./events";
 import { validateMessage } from "./events/validators";
 import * as hats from "./hat";
 import { closeModal, openModal } from "./modal";
-import { RateLimit } from "./util/RateLimit";
-import { customReply } from "./util/custom";
 
 // Weird workaround since the client's EventEmitter class doesn't have "once"
 function setup() {
@@ -103,10 +101,12 @@ function updatePreview(hatId: string) {
 // MPP events
 
 const customMessagePrefix = "hat_";
-const queryLimit = new RateLimit(100, 1000);
 
-MPP.client.on("custom", msg => {
-    if (typeof msg.data.m == "undefined") return;
+MPP.client.on("custom", m => {
+    if (typeof m.data.m == "undefined") return;
+
+    // Clone message for compatibility
+    let msg = structuredClone(m);
 
     // Remove prefix and store in the correct property for the emitter to work
     msg.data.evtn = msg.data.m.substring(customMessagePrefix.length).trim();
@@ -120,7 +120,7 @@ MPP.client.on("custom", msg => {
 });
 
 MPP.client.on("participant added", p => {
-    if (queryLimit.spend()) customReply(p._id, { m: "hat_query" });
+    hats.getPartHat(p._id);
 });
 
 MPP.client.on("participant removed", p => {
