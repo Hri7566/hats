@@ -1,6 +1,9 @@
 import { customReply } from "./util/custom";
+import { RateLimit } from "./util/RateLimit";
 
 export const serverAddress = "https://hats.hri7566.info/api";
+
+const queryLimit = new RateLimit(100, 1000);
 
 let currentHat = "tophat";
 let savedHat = localStorage.getItem("hat");
@@ -233,7 +236,7 @@ export function getPartHat(userId: string) {
     if (typeof cached !== "undefined") return cached;
 
     // Otherwise, ask them what hat they have
-    customReply(userId, { m: "hat_query" });
+    if (queryLimit.spend()) customReply(userId, { m: "hat_query" });
 }
 
 /**
