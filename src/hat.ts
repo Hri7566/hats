@@ -108,7 +108,9 @@ export async function applyHat(userId: string, hatId: string) {
         .children(".name")
         .html(
             `<span class="nametext"></span><div class="cursor-hat-container"><div class="cursor-hat"></div></div>`
-        ).find(".nametext").text(cursorNameText);
+        )
+        .find(".nametext")
+        .text(cursorNameText);
 
     if (cursorTagText.length !== 0) {
         $(part.cursorDiv)
@@ -284,7 +286,7 @@ export async function changeHat(id: string) {
             "src",
             getHatBaseURL(getCurrentHat()).toString()
         );
-    } catch (err) { }
+    } catch (err) {}
 }
 
 /**
@@ -295,4 +297,13 @@ export async function getHatList() {
     // Get list of hats
     const data = await fetch(serverAddress + "/list");
     return (await data.json()) as any as Record<string, string>;
+}
+
+/**
+ * Clear the cache of users' hats
+ */
+export async function clearHatCache() {
+    localStorage.removeItem("hatCache");
+    localStorage.removeItem("hat");
+    console.log("Hat cache cleared");
 }

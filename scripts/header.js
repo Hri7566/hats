@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         mpp-hats
 // @namespace    http://github.com/Hri7566/hats
-// @version      2.1.4
+// @version      $VERSION
 // @description  Hats for MPP.net
 // @author       Hri7566
 // @match        https://www.multiplayerpiano.net/*

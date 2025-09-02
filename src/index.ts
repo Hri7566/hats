@@ -27,7 +27,7 @@ if (!MPP.client.isConnected()) {
 
 // Add hat selector button
 $("body").append(
-    `<button class="mpp-hats-button top-button" aria-hidden="true">
+    `<button class="mpp-hats-button top-button">
         <img id="mpp-hats-button-icon" src="https://hats.hri7566.info/api/hat?id=tophat" style="vertical-align: middle;">
         Hats
     </button>`
@@ -76,6 +76,7 @@ $("#modals").append(`
             <p>Preview: &nbsp;</p>
             <img style="padding-left: 32px;" id="hat-selector-preview" src="" width=32>
         </label>
+        <div style="width: 72px;" class="ugly-button clear-cache">Clear Cache</div>
     </p>
     <button class="submit">SUBMIT</button>
 </div>`);
@@ -86,11 +87,13 @@ $("#modal #modals #hats button.submit").on("click", () => {
     closeModal();
 });
 
-$("#modal #modals #hats select#hat-selector").on("change", function(e) {
-    const option = $("option:selected", this);
+$("#modal #modals #hats select#hat-selector").on("change", function (e) {
     const value = (this as HTMLSelectElement).value;
-
     updatePreview(value);
+});
+
+$("#modal #modals #hats .clear-cache").on("click", () => {
+    hats.clearHatCache();
 });
 
 function updatePreview(hatId: string) {
@@ -99,16 +102,14 @@ function updatePreview(hatId: string) {
 }
 
 // MPP events
-
 const customMessagePrefix = "hat_";
 
 MPP.client.on("custom", m => {
-    if (typeof m.data.m == "undefined") return;
-
-    // Clone message for compatibility
-    let msg = structuredClone(m);
+    // pass by reference moment
+    const msg = { ...m };
 
     // Remove prefix and store in the correct property for the emitter to work
+    if (typeof msg.data.m !== "string") return;
     msg.data.evtn = msg.data.m.substring(customMessagePrefix.length).trim();
     delete msg.data.m;
 

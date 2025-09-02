@@ -1,8 +1,16 @@
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
+import * as pkg from "../package.json";
 
 const outdir = "./build";
 const targetName = "mpp-hats";
+
+const buildDate = `// Build date: ${new Date().toISOString()}\n`;
+
+const placeholders: Record<string, string> = {
+    $NAME: pkg.name,
+    $VERSION: pkg.version
+};
 
 console.log("Building...");
 
@@ -22,9 +30,12 @@ if (!result.success) {
 
 console.log("Bundling header...");
 
-const buildDate = `// Build date: ${new Date().toISOString()}\n`;
+let header = readFileSync("scripts/header.js").toString();
 
-const header = readFileSync("scripts/header.js").toString();
+for (const placeholder of Object.keys(placeholders)) {
+    header = header.split(placeholder).join(placeholders[placeholder]);
+}
+
 const script = readFileSync(join(outdir, "index.js"));
 writeFileSync(
     join(outdir, targetName + ".user.js"),

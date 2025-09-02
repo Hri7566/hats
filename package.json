@@ -1,19 +1,19 @@
 {
     "name": "mpp-hats",
-    "version": "2.1.4",
+    "version": "2.1.5",
     "module": "src/index.ts",
     "type": "module",
     "devDependencies": {
         "@types/bun": "latest",
-        "@types/jquery": "^3.5.29",
-        "mpp-client-net": "^1.2.0"
+        "@types/jquery": "^3.5.33",
+        "mpp-client-net": "^1.2.3"
     },
     "peerDependencies": {
-        "typescript": "^5.0.0"
+        "typescript": "^5.4.5"
     },
     "dependencies": {
         "jquery": "^3.7.1",
-        "yaml": "^2.4.2",
-        "zod": "^3.23.6"
+        "yaml": "^2.8.1",
+        "zod": "^4.1.3"
     }
 }
