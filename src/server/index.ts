@@ -1,4 +1,4 @@
-import { join, resolve } from "path/posix";
+import { resolve } from "path/posix";
 import { exists, readFile, readdir } from "fs/promises";
 import YAML from "yaml";
 
@@ -10,7 +10,7 @@ const jsonReply = (data: any) => {
 
 const assetsFolder = "./assets/";
 
-const getHatImage = async (id: string) => {
+async function getHatImage(id: string) {
     const fileList = await readdir(resolve(assetsFolder));
     const defangedId = encodeURIComponent(id)
         .split("%2F")
@@ -23,8 +23,10 @@ const getHatImage = async (id: string) => {
 
     for (const file of fileList) {
         const parsed = file.split(".");
-        let filename = parsed[0];
+
+        const filename = parsed[0];
         if (!filename) continue;
+
         if (defangedId == "crown") {
             foundFile = "crown";
             foundFileExt = "png";
@@ -46,19 +48,21 @@ const getHatImage = async (id: string) => {
     if (!foundFileExt) throw new Error("invalid server file");
 
     const path = resolve(assetsFolder) + "/" + foundFile + "." + foundFileExt;
-    console.log(path);
     if (!(await exists(path))) throw new Error("invalid id");
-    const data = Bun.file(path);
-    return data;
-};
 
-const getHatList = async () => {
+    const data = Bun.file(path);
+
+    return data;
+}
+
+async function getHatList() {
     const data = (await readFile("./hats.yml")).toString();
     const y = YAML.parse(data);
-    return y;
-};
 
-Bun.serve({
+    return y;
+}
+
+const server = Bun.serve({
     async fetch(req) {
         const url = new URL(req.url);
 
@@ -73,16 +77,20 @@ Bun.serve({
         if (url.pathname == "/hat") {
             const params = new URLSearchParams(url.search);
             if (!params.has("id")) return new Response("no id provided");
+
             const id = params.get("id");
 
             const image = await getHatImage(id as string);
             if (!image) return new Response("invalid id");
+
             const res = new Response(image);
+
             res.headers.set("Access-Control-Allow-Origin", "*");
             res.headers.set(
                 "Access-Control-Allow-Methods",
                 "GET, POST, PUT, DELETE, OPTIONS"
             );
+
             return res;
         }
 
@@ -104,3 +112,5 @@ Bun.serve({
         return new Response(err.toString());
     }
 });
+
+console.log(`Server started on ${server.hostname}:${server.port}`);
