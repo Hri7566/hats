@@ -1,5 +1,5 @@
 import { resolve } from "path/posix";
-import { exists, readFile, readdir } from "fs/promises";
+import { exists, readFile, readdir } from "node:fs/promises";
 import YAML from "yaml";
 
 const jsonReply = (data: any) => {

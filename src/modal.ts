@@ -1,3 +1,5 @@
+import $ from "jquery";
+
 let gModal: any;
 
 export function modalHandleEsc(evt: any) {

@@ -2,6 +2,7 @@ import { e } from "./events";
 import { validateMessage } from "./events/validators";
 import * as hats from "./hat";
 import { closeModal, openModal } from "./modal";
+import $ from "jquery";
 
 // Weird workaround since the client's EventEmitter class doesn't have "once"
 function setup() {
@@ -41,65 +42,109 @@ $(".mpp-hats-button").css({
 });
 
 $(".mpp-hats-button").on("click", async () => {
-    $("#modal #modals #hats #hat-selector").empty();
+    const grid = $("#modal #modals #hats #hat-grid");
+    grid.empty();
+
+    // Add "None" option first
+    grid.append(
+        `<div class="hat-tile" data-hat-id="">
+            <div class="hat-tile-img" style="width:32px;height:32px;margin:0 auto;opacity:0.3;font-size:20px;line-height:32px;text-align:center;">✕</div>
+            <div class="hat-tile-name">None</div>
+        </div>`
+    );
+
     openModal("#modal #modals #hats");
 
     const list = await hats.getHatList();
 
     for (const hatId of Object.keys(list)) {
         const hatName = list[hatId];
-        $(`#modal #modals #hats #hat-selector`).append(
-            `<option value="${hatId}">${hatName}</option>`
+        grid.append(
+            `<div class="hat-tile" data-hat-id="${hatId}">
+                <img class="hat-tile-img" src="${hats.getHatBaseURL(hatId)}" width="32" height="32">
+                <div class="hat-tile-name">${hatName}</div>
+            </div>`
         );
     }
 
-    $(
-        `#modal #modals #hats #hat-selector option[value=${hats.getCurrentHat()}]`
-    ).attr("selected", "true");
-
-    updatePreview(hats.getCurrentHat());
+    // Highlight current hat
+    setSelectedTile(hats.getCurrentHat());
 });
 
 // Add hat selector menu
 
+$("head").append(`<style>
+    #hats #hat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
+        gap: 4px;
+        overflow-y: auto;
+        max-height: 155px;
+        padding: 4px;
+        box-sizing: border-box;
+    }
+    .hat-tile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        padding: 5px 3px;
+        border-radius: 5px;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: background 0.1s, border-color 0.1s;
+    }
+    .hat-tile:hover {
+        background: rgba(255,255,255,0.08);
+    }
+    .hat-tile.selected {
+        border-color: #7eb8f7;
+        background: rgba(126,184,247,0.12);
+    }
+    .hat-tile-img {
+        image-rendering: pixelated;
+        display: block;
+    }
+    .hat-tile-name {
+        font-size: 9px;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        opacity: 0.85;
+    }
+</style>`);
+
 $("#modals").append(`
-<div id="hats" class="dialog" style="height: 175px; margin-top: -90px; display: none;">
-    <h3>MPP Hats</h3>
-    <hr />
-    <p>
-        <label>Select hat: &nbsp;
-            <select id="hat-selector">
-                <option value="">None</option>
-            </select>
-        </label>
-        <label>
-            <p>Preview: &nbsp;</p>
-            <img style="padding-left: 32px;" id="hat-selector-preview" src="" width=32>
-        </label>
-        <div style="width: 72px;" class="ugly-button clear-cache">Clear Cache</div>
-    </p>
-    <button class="submit">SUBMIT</button>
+<div id="hats" class="dialog" style="height: 260px; margin-top: -130px; display: none;">
+    <h3 style="margin-bottom: 6px;">MPP Hats</h3>
+    <hr style="margin-bottom: 8px;" />
+    <div id="hat-grid"></div>
+    <div style="display: flex; gap: 6px; margin-top: 8px;">
+        <button class="submit" style="flex: 1; margin: 0;">SUBMIT</button>
+        <div class="ugly-button clear-cache" style="flex-shrink: 0;">Clear Cache</div>
+    </div>
 </div>`);
 
-$("#modal #modals #hats button.submit").on("click", () => {
-    let selectedHat = $("#modal #modals #hats #hat-selector").val() as string;
-    hats.changeHat(selectedHat);
-    closeModal();
+function setSelectedTile(hatId: string) {
+    $("#modal #modals #hats .hat-tile").removeClass("selected");
+    $(`#modal #modals #hats .hat-tile[data-hat-id="${hatId}"]`).addClass("selected");
+}
+
+$("#modal #modals #hats").on("click", ".hat-tile", function () {
+    setSelectedTile($(this).data("hat-id"));
 });
 
-$("#modal #modals #hats select#hat-selector").on("change", function (e) {
-    const value = (this as HTMLSelectElement).value;
-    updatePreview(value);
+$("#modal #modals #hats button.submit").on("click", () => {
+    const selectedHat = ($("#modal #modals #hats .hat-tile.selected").data("hat-id") ?? "") as string;
+    hats.changeHat(selectedHat);
+    closeModal();
 });
 
 $("#modal #modals #hats .clear-cache").on("click", () => {
     hats.clearHatCache();
 });
-
-function updatePreview(hatId: string) {
-    const imageURL = hats.getHatBaseURL(hatId);
-    $("#hat-selector-preview").attr("src", imageURL.toString());
-}
 
 // MPP events
 const customMessagePrefix = "hat_";
@@ -147,7 +192,7 @@ MPP.client.on("c", async msg => {
     for (let i = 0; i < msg.c.length; i++) {
         try {
             const a = msg.c[i];
-            if (a.m == "dm") continue;
+            if ((a.m as string) == "dm") continue;
 
             const p = MPP.client.findParticipantById(a.p.id);
             if (!p) continue;
@@ -187,6 +232,11 @@ MPP.client.on("a", msg => {
         console.error(err);
     }
 });
+
+// Apply hat immediately if already in a channel when the script loads
+if (MPP.client.channel) {
+    hats.changeHat(hats.getCurrentHat());
+}
 
 // global for baby
 (MPP as any).hats = hats;

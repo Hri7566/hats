@@ -1,5 +1,12 @@
+import $ from "jquery";
 import { customReply } from "./util/custom";
 import { RateLimit } from "./util/RateLimit";
+import type { Participant } from "mpp-client-net";
+
+type ParticipantWithDivs = Participant & {
+    nameDiv?: HTMLDivElement;
+    cursorDiv?: HTMLDivElement;
+}
 
 export const serverAddress = "https://hats.hri7566.info/api";
 
@@ -58,17 +65,21 @@ export async function getHatImage(hatId: string) {
  */
 export function removeHat(userId: string) {
     // Get participant
-    const part = Object.values(MPP.client.ppl).find(p => p._id == userId);
+    const part = Object.values(MPP.client.ppl).find(p => p._id == userId) as ParticipantWithDivs;
+
     if (!part) return;
+    if (!part.nameDiv) return;
 
     // Remove the user's hat
     $(part.nameDiv).children(".mpp-hat").remove();
 
-    // Remove cursor hat
-    $(part.cursorDiv)
-        .children(".name")
-        .children(".cursor-hat-conatiner")
-        .remove();
+    // Remove cursor hat (other players only)
+    if (part.cursorDiv) {
+        $(part.cursorDiv)
+            .children(".name")
+            .children(".cursor-hat-container")
+            .remove();
+    }
 }
 
 /**
@@ -82,86 +93,21 @@ export async function applyHat(userId: string, hatId: string) {
     if (typeof MPP.client.channel == "undefined") return;
 
     // Get participant
-    const part = Object.values(MPP.client.ppl).find(p => p._id == userId);
-    if (!part) return;
+    const part = Object.values(MPP.client.ppl).find(p => p._id == userId) as ParticipantWithDivs;
 
-    // Create hat elements
+    if (!part) return;
+    if (!part.nameDiv) return;
+
+    // Create hat element on name div
     $(part.nameDiv).prepend(
         `<div class="mpp-hat" data-hat-id="${hatId}"></div>`
     );
 
-    const cursorNameDiv = $(part.cursorDiv).children(".name");
-
-    let cursorTagText = "";
-    let cursorTagColor = "";
-    let cursorNameText = $(part.cursorDiv).text();
-
-    if ($(cursorNameDiv).children(".nametext").text().length !== 0) {
-        cursorTagText = $(cursorNameDiv).children(".curtag").text();
-        cursorTagColor = $(cursorNameDiv)
-            .children(".curtag")
-            .css("background-color");
-        cursorNameText = $(cursorNameDiv).children(".nametext").text();
-    }
-
-    $(part.cursorDiv)
-        .children(".name")
-        .html(
-            `<span class="nametext"></span><div class="cursor-hat-container"><div class="cursor-hat"></div></div>`
-        )
-        .find(".nametext")
-        .text(cursorNameText);
-
-    if (cursorTagText.length !== 0) {
-        $(part.cursorDiv)
-            .children(".name")
-            .prepend(
-                `<span class="curtag" id="nametag-${part._id}" style="background-color: ${cursorTagColor};">${cursorTagText}</span>`
-            );
-    }
-
-    // Force newer cursors on older clients
-    $(part.cursorDiv).children(".name").css({
-        display: "block",
-        "align-items": "center",
-        position: "relative",
-        "white-space": "nowrap",
-        height: "fit-content",
-        width: "fit-content",
-        "line-height": "15px",
-        "text-align": "center",
-        "border-radius": "3px",
-        left: "18px",
-        top: "12px",
-        "pointer-events": "none",
-        color: "#fff",
-        padding: "unset",
-        "font-size": "unset"
-    });
-
-    $(part.cursorDiv).children(".name").children("span.nametext").css({
-        display: "inline-block",
-        "pointer-events": "none",
-        color: "#fff",
-        "border-radius": "2px",
-        "margin-bottom": "1px",
-        "white-space": "nowrap",
-        "flex-shrink": "0", // some idiot put this in the mppnet client css, there is no flex here
-        "font-size": "10px"
-    });
-
     const hat = $(part.nameDiv).children(".mpp-hat");
-    const cursorHatContainer = $(part.cursorDiv)
-        .children(".name")
-        .children(".cursor-hat-container");
-    const cursorHat = $(part.cursorDiv)
-        .children(".name")
-        .children(".cursor-hat-container")
-        .children(".cursor-hat");
 
     hat.css({
-        // background: `url(crown.png)`,
         background: `url(${serverAddress}/hat?id=${encodeURIComponent(hatId)})`,
+        "background-size": "contain",
         width: "16px",
         height: "16px",
         position: "absolute",
@@ -169,32 +115,103 @@ export async function applyHat(userId: string, hatId: string) {
         left: "4px"
     });
 
-    cursorHatContainer.css({
-        display: "inline-block",
-        position: "relative",
-        top: "-24px",
-        right: "0",
-        height: "0",
-        width: "16px"
-    });
+    // Cursor hat (other players only — local user has no cursorDiv)
+    if (part.cursorDiv) {
+        const cursorNameDiv = $(part.cursorDiv).children(".name");
 
-    cursorHat.css({
-        content: `url(${serverAddress}/hat?id=${encodeURIComponent(hatId)})`
-    });
+        let cursorTagText = "";
+        let cursorTagColor = "";
+        let cursorNameText = $(part.cursorDiv).text();
 
-    if (typeof MPP.client.channel.crown == "object") {
-        if (MPP.client.channel.crown.hasOwnProperty("userId")) {
-            if (MPP.client.channel.crown.userId == userId) {
-                hat.css({
-                    top: "-8px",
-                    left: "20px"
-                });
+        if ($(cursorNameDiv).children(".nametext").text().length !== 0) {
+            cursorTagText = $(cursorNameDiv).children(".curtag").text();
+            cursorTagColor = $(cursorNameDiv)
+                .children(".curtag")
+                .css("background-color");
+            cursorNameText = $(cursorNameDiv).children(".nametext").text();
+        }
 
-                cursorHatContainer.css({
-                    position: "absolute",
-                    top: "-6px",
-                    right: "17px"
-                });
+        $(part.cursorDiv)
+            .children(".name")
+            .html(
+                `<span class="nametext"></span><div class="cursor-hat-container"><div class="cursor-hat"></div></div>`
+            )
+            .find(".nametext")
+            .text(cursorNameText);
+
+        if (cursorTagText.length !== 0) {
+            $(part.cursorDiv)
+                .children(".name")
+                .prepend(
+                    `<span class="curtag" id="nametag-${part._id}" style="background-color: ${cursorTagColor};">${cursorTagText}</span>`
+                );
+        }
+
+        // Force newer cursors on older clients
+        $(part.cursorDiv).children(".name").css({
+            display: "block",
+            "align-items": "center",
+            position: "relative",
+            "white-space": "nowrap",
+            height: "fit-content",
+            width: "fit-content",
+            "line-height": "15px",
+            "text-align": "center",
+            "border-radius": "3px",
+            left: "18px",
+            top: "12px",
+            "pointer-events": "none",
+            color: "#fff",
+            padding: "unset",
+            "font-size": "unset"
+        });
+
+        $(part.cursorDiv).children(".name").children("span.nametext").css({
+            display: "inline-block",
+            "pointer-events": "none",
+            color: "#fff",
+            "border-radius": "2px",
+            "margin-bottom": "1px",
+            "white-space": "nowrap",
+            "flex-shrink": "0", // some idiot put this in the mppnet client css, there is no flex here
+            "font-size": "10px"
+        });
+
+        const cursorHatContainer = $(part.cursorDiv)
+            .children(".name")
+            .children(".cursor-hat-container");
+        const cursorHat = $(part.cursorDiv)
+            .children(".name")
+            .children(".cursor-hat-container")
+            .children(".cursor-hat");
+
+        cursorHatContainer.css({
+            display: "inline-block",
+            position: "relative",
+            top: "-24px",
+            right: "0",
+            height: "0",
+            width: "16px"
+        });
+
+        cursorHat.css({
+            content: `url(${serverAddress}/hat?id=${encodeURIComponent(hatId)})`
+        });
+
+        if (typeof MPP.client.channel.crown == "object") {
+            if (MPP.client.channel.crown.hasOwnProperty("userId")) {
+                if (MPP.client.channel.crown.userId == userId) {
+                    hat.css({
+                        top: "-8px",
+                        left: "20px"
+                    });
+
+                    cursorHatContainer.css({
+                        position: "absolute",
+                        top: "-6px",
+                        right: "17px"
+                    });
+                }
             }
         }
     }
@@ -286,7 +303,7 @@ export async function changeHat(id: string) {
             "src",
             getHatBaseURL(getCurrentHat()).toString()
         );
-    } catch (err) {}
+    } catch (err) { }
 }
 
 /**
