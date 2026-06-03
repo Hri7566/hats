@@ -1,7 +1,6 @@
 import { e } from "./events";
 import { validateMessage } from "./events/validators";
 import * as hats from "./hat";
-import { closeModal, openModal } from "./modal";
 import $ from "jquery";
 
 // Weird workaround since the client's EventEmitter class doesn't have "once"
@@ -53,7 +52,7 @@ $(".mpp-hats-button").on("click", async () => {
         </div>`
     );
 
-    openModal("#modal #modals #hats");
+    MPP.modal.openModal("#modal #modals #hats");
 
     const list = await hats.getHatList();
 
@@ -132,14 +131,14 @@ function setSelectedTile(hatId: string) {
     $(`#modal #modals #hats .hat-tile[data-hat-id="${hatId}"]`).addClass("selected");
 }
 
-$("#modal #modals #hats").on("click", ".hat-tile", function () {
+$("#modal #modals #hats").on("click", ".hat-tile", function() {
     setSelectedTile($(this).data("hat-id"));
 });
 
 $("#modal #modals #hats button.submit").on("click", () => {
     const selectedHat = ($("#modal #modals #hats .hat-tile.selected").data("hat-id") ?? "") as string;
     hats.changeHat(selectedHat);
-    closeModal();
+    MPP.modal.closeModal();
 });
 
 $("#modal #modals #hats .clear-cache").on("click", () => {
@@ -154,6 +153,7 @@ MPP.client.on("custom", m => {
     const msg = { ...m };
 
     // Remove prefix and store in the correct property for the emitter to work
+    if (typeof msg.data !== "object") return;
     if (typeof msg.data.m !== "string") return;
     msg.data.evtn = msg.data.m.substring(customMessagePrefix.length).trim();
     delete msg.data.m;

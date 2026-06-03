@@ -17,6 +17,11 @@ declare interface IMPP {
         send(str: string): void;
         blur(): void;
     };
+
+    modal: {
+        openModal(selector: string, focus?: any): void;
+        closeModal(): void;
+    }
 }
 
 declare global {
