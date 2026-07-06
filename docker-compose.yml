@@ -1,0 +1,43 @@
+services:
+    postgres:
+        image: postgres:17-alpine
+        network_mode: host
+        environment:
+            - POSTGRES_USER=${POSTGRES_USER:-hats}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+            - POSTGRES_DB=${POSTGRES_DB:-hats}
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        restart: unless-stopped
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-hats} -d ${POSTGRES_DB:-hats}"]
+            interval: 5s
+            timeout: 5s
+            retries: 10
+    server:
+        build:
+            context: ./
+            network: host
+        network_mode: host
+        stdin_open: true
+        restart: unless-stopped
+        depends_on:
+            postgres:
+                condition: service_healthy
+        environment:
+            - SERVICE=server
+            - DATABASE_URL=${DATABASE_URL}
+    bot:
+        build:
+            context: ./
+            network: host
+        network_mode: host
+        depends_on:
+            - server
+        environment:
+            - SERVICE=bot
+            - MPPNET_TOKEN=${MPPNET_TOKEN}
+            - HATS_API_URL=http://localhost:3000
+
+volumes:
+    postgres_data:
